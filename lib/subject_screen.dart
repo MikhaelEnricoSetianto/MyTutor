@@ -35,163 +35,84 @@ class _SubjectPageState extends State<SubjectPage> {
                 title,
                 style: const TextStyle(fontSize: 40),
               ))
-            : SingleChildScrollView(
-                physics: const ScrollPhysics(),
-                child: Column(
-                  children: <Widget>[
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: SubjectList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return SizedBox(
-                            height: 280,
-                            child: Card(
-                              margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                              child: Row(
+            : Column(
+                children: [
+                  Expanded(
+                      child: GridView.count(
+                          crossAxisCount: 2,
+                          childAspectRatio: (1 / 1),
+                          children: List.generate(SubjectList.length, (index) {
+                            return InkWell(
+                              splashColor: Colors.amber,
+                              child: Card(
+                                  child: Column(
                                 children: [
                                   Flexible(
-                                    flex: 3,
-                                    child: Container(
-                                      margin: const EdgeInsets.fromLTRB(
-                                          5, 5, 10, 5),
-                                      child: CachedNetworkImage(
-                                        imageUrl: CONSTANTS.server +
-                                            "/my_tutor/assets/courses/" +
-                                            SubjectList[index]
-                                                .subject_id
-                                                .toString() +
-                                            '.jpg',
-                                      ),
+                                    flex: 6,
+                                    child: CachedNetworkImage(
+                                      imageUrl: CONSTANTS.server +
+                                          "/my_tutor/assets/courses/" +
+                                          SubjectList[index]
+                                              .subject_id
+                                              .toString() +
+                                          '.jpg',
                                     ),
                                   ),
                                   Flexible(
-                                      flex: 5,
+                                      flex: 4,
                                       child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
                                         children: [
-                                          Container(
-                                            margin: const EdgeInsets.all(2),
-                                            child: Text(
-                                              SubjectList[index]
-                                                  .subject_name
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
+                                          Text(
+                                            SubjectList[index]
+                                                .subject_name
+                                                .toString(),
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                          Card(
-                                            child: Flexible(
-                                              flex: 3,
-                                              child: Text(
-                                                  "\n" +
-                                                      SubjectList[index]
-                                                          .subject_description
-                                                          .toString(),
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.white,
-                                                  )),
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: const EdgeInsets.all(5),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Card(
-                                                  child: Container(
-                                                    margin:
-                                                        const EdgeInsets.all(5),
-                                                    child: Text(
-                                                        "RM " +
-                                                            double.parse(SubjectList[
-                                                                        index]
-                                                                    .subject_price
-                                                                    .toString())
-                                                                .toStringAsFixed(
-                                                                    2),
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 12,
-                                                        )),
-                                                  ),
-                                                ),
-                                                Card(
-                                                  child: Container(
-                                                    margin:
-                                                        const EdgeInsets.all(5),
-                                                    child: Text(
-                                                        SubjectList[index]
-                                                                .subject_sessions
-                                                                .toString() +
-                                                            " session(s)",
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 12,
-                                                        )),
-                                                  ),
-                                                ),
-                                                Card(
-                                                  child: Container(
-                                                      margin:
-                                                          const EdgeInsets.all(
-                                                              5),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          const Icon(Icons.star,
-                                                              color: Colors
-                                                                  .yellow),
-                                                          Text(
-                                                              SubjectList[index]
-                                                                  .subject_rating
-                                                                  .toString(),
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .yellow,
-                                                                fontSize: 12,
-                                                              )),
-                                                        ],
-                                                      )),
-                                                )
-                                              ],
-                                            ),
-                                          ),
+                                          Text("\n" +
+                                              (SubjectList[index]
+                                                  .subject_description
+                                                  .toString())),
+                                          Text("RM " +
+                                              double.parse(SubjectList[index]
+                                                      .subject_price
+                                                      .toString())
+                                                  .toStringAsFixed(2)),
+                                          Text(SubjectList[index]
+                                              .subject_sessions
+                                              .toString()),
+                                          Text(SubjectList[index]
+                                              .subject_rating
+                                              .toString()),
                                         ],
                                       ))
                                 ],
-                              ),
-                            ));
+                              )),
+                            );
+                          }))),
+                  SizedBox(
+                    height: 30,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: numpage,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return SizedBox(
+                          width: 40,
+                          child: TextButton(
+                              onPressed: () {
+                                currpage = index + 1;
+                                loadSubject();
+                              },
+                              child: Text(
+                                (index + 1).toString(),
+                              )),
+                        );
                       },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(3),
-                      child: NumberPaginator(
-                        numberPages: numpage ?? 1,
-                        onPageChange: (int index) {
-                          setState(() {
-                            currpage = index + 1;
-                            loadSubject();
-                          });
-                        },
-                        buttonShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(1),
-                        ),
-                        buttonSelectedBackgroundColor:
-                            const Color.fromARGB(255, 0, 154, 33),
-                        buttonSelectedForegroundColor: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ));
   }
 
@@ -206,6 +127,7 @@ class _SubjectPageState extends State<SubjectPage> {
             'Error', 408); // Request Timeout response status code
       },
     ).then((response) {
+      print(response.body);
       var jsondata = jsonDecode(response.body);
       if (response.statusCode == 200 && jsondata['status'] == 'success') {
         var extractdata = jsondata['data'];

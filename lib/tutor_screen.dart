@@ -34,127 +34,77 @@ class _TutorPageState extends State<TutorPage> {
                 title,
                 style: const TextStyle(fontSize: 60),
               ))
-            : SingleChildScrollView(
-                physics: const ScrollPhysics(),
-                child: Column(
-                  children: <Widget>[
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: TutorList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return SizedBox(
-                            height: 280,
-                            child: Card(
-                              margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                              child: Row(
+            : Column(
+                children: [
+                  Expanded(
+                      child: GridView.count(
+                          crossAxisCount: 2,
+                          childAspectRatio: (1 / 1),
+                          children: List.generate(TutorList.length, (index) {
+                            return InkWell(
+                              splashColor: Colors.amber,
+                              child: Card(
+                                  child: Column(
                                 children: [
                                   Flexible(
-                                    flex: 3,
-                                    child: Container(
-                                      margin:
-                                          const EdgeInsets.fromLTRB(4, 2, 6, 2),
-                                      child: CachedNetworkImage(
-                                        imageUrl: CONSTANTS.server +
-                                            "/my_tutor/assets/tutors/" +
-                                            TutorList[index]
-                                                .tutor_id
-                                                .toString() +
-                                            '.jpg',
-                                      ),
+                                    flex: 6,
+                                    child: CachedNetworkImage(
+                                      imageUrl: CONSTANTS.server +
+                                          "/my_tutor/assets/tutors/" +
+                                          TutorList[index].tutor_id.toString() +
+                                          '.jpg',
                                     ),
                                   ),
                                   Flexible(
-                                      flex: 5,
+                                      flex: 4,
                                       child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
                                         children: [
-                                          Container(
-                                            margin: const EdgeInsets.all(5),
-                                            child: Text(
-                                              TutorList[index]
-                                                  .tutor_name
-                                                  .toString(),
-                                              style: const TextStyle(
+                                          Text(
+                                            TutorList[index]
+                                                .tutor_name
+                                                .toString(),
+                                            style: const TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                          Card(
-                                            child: Flexible(
-                                              flex: 3,
-                                              child: Text(
-                                                  "\n" +
-                                                      TutorList[index]
-                                                          .tutor_description
-                                                          .toString(),
-                                                  style: const TextStyle(
-                                                    fontSize: 13,
-                                                    color: Colors.white,
-                                                  )),
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: const EdgeInsets.all(5),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                const Icon(Icons.mail,
-                                                    color: Colors.black,
-                                                    size: 20),
-                                                Text(
-                                                    TutorList[index]
-                                                        .tutor_email
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                    )),
-                                                const Icon(Icons.phone,
-                                                    color: Colors.green,
-                                                    size: 20),
-                                                Text(
-                                                    TutorList[index]
-                                                        .tutor_phone
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                    )),
-                                              ],
-                                            ),
-                                          )
+                                          Text("\n" +
+                                              (TutorList[index]
+                                                  .tutor_description
+                                                  .toString())),
+                                          Text(TutorList[index]
+                                              .tutor_email
+                                              .toString()),
+                                          Text(TutorList[index]
+                                              .tutor_phone
+                                              .toString()),
                                         ],
                                       ))
                                 ],
-                              ),
-                            ));
+                              )),
+                            );
+                          }))),
+                  SizedBox(
+                    height: 30,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: numpage,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return SizedBox(
+                          width: 40,
+                          child: TextButton(
+                              onPressed: () {
+                                currpage = index + 1;
+                                loadTutor();
+                              },
+                              child: Text(
+                                (index + 1).toString(),
+                              )),
+                        );
                       },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(3),
-                      child: NumberPaginator(
-                        numberPages: numpage ?? 1,
-                        onPageChange: (int index) {
-                          setState(() {
-                            currpage = index + 1;
-                            loadTutor();
-                          });
-                        },
-                        buttonShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(1),
-                        ),
-                        buttonSelectedBackgroundColor:
-                            const Color.fromARGB(255, 0, 154, 33),
-                        buttonSelectedForegroundColor: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ));
   }
 

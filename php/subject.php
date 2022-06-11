@@ -6,21 +6,18 @@ if (!isset($_POST)) {
     die();
 }
 
-$limit = 5;
-$page = (isset($_POST['page']) && is_numeric($_POST['page'])) ? $_POST['page'] : 1;
-$pageStart = ($page - 1) * $limit;
-$sqlselectSubject = "SELECT * FROM tbl_subjects LIMIT $pageStart, $limit";
-$stmt = $conn->prepare($sqlselectSubject);
-$stmt->execute();
-$result = $stmt->get_result();
+$results_per_page = 5;
+$pageno = (int)$_POST['pageno']??1;
 
-$sql = $conn->query("SELECT count(subject_id) AS id FROM tbl_subjects")->fetch_assoc();
-$allRecords = $sql['id'];
-$totalPages = ceil($allRecords / $limit);
-$prev = $page - 1;
-$next = $page + 1;
+$page_first_result = ($pageno - 1) * $results_per_page;
+$sqlloadsubject = "SELECT * FROM tbl_subjects";
+$result = $conn->query($sqlloadsubject);
+$number_of_result = $result->num_rows;
+$number_of_page = ceil($number_of_result / $results_per_page);
+$sqlloadsubject = $sqlloadsubject . " LIMIT $page_first_result , $results_per_page";
+$result = $conn->query($sqlloadsubject);
 
-if ($allRecords > 0) {
+if ($result->num_rows > 0) {
     $subjects['subjects'] = array();
     while ($row = $result->fetch_assoc()) {
         $sublist = array();
