@@ -1,6 +1,14 @@
+// ignore_for_file: avoid_print
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:login_ui/main_screen.dart';
 import 'package:login_ui/register_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import '../constants.dart';
+import 'dart:convert';
+import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.title}) : super(key: key);
@@ -13,6 +21,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   var rememberValue = false;
+  final TextEditingController _emailEditingController = TextEditingController();
+  final TextEditingController _passwordEditingController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                         ? null
                         : "Please enter your email!",
                     maxLines: 1,
+                    controller: _emailEditingController,
                     decoration: InputDecoration(
                       hintText: 'Enter your email',
                       prefixIcon: const Icon(Icons.email),
@@ -62,6 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                     },
                     maxLines: 1,
+                    controller: _passwordEditingController,
                     obscureText: true,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.lock),
@@ -88,7 +101,13 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {}
+                      // Navigator.pushReplacement(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (content) => const MainPage()));
+                      if (_formKey.currentState!.validate()) {
+                        _loginUser();
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.fromLTRB(40, 15, 40, 15),
@@ -128,5 +147,41 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  void _loginUser() {
+    String _email = _emailEditingController.text;
+    String _password = _passwordEditingController.text;
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      ProgressDialog pd = ProgressDialog(context: context);
+      pd.show(msg: 'Logging in, Please Wait', max: 100);
+      http.post(Uri.parse(CONSTANTS.server + "/my_tutor/login.php"),
+          body: {"email": _email, "password": _password}).then((response) {
+        print(response.body);
+        var data = jsonDecode(response.body);
+        if (response.statusCode == 200 && data['status'] == 'success') {
+          Fluttertoast.showToast(
+              msg: "Success",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 16.0);
+          pd.update(value: 100, msg: "Logged In !");
+          pd.close();
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (content) => const MainPage()));
+        } else {
+          Fluttertoast.showToast(
+              msg: "Failed",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 16.0);
+          pd.update(value: 100, msg: "Failed");
+          pd.close();
+        }
+      });
+    }
   }
 }

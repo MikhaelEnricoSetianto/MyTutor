@@ -38,6 +38,9 @@ dependencies:
   shared_preferences: ^2.0.13
   cupertino_icons: ^1.0.2
   email_validator: ^2.0.1
+  sn_progress_dialog: ^1.0.8
+  number_paginator: ^0.0.2
+  cached_network_image: ^3.2.1
 
 dev_dependencies:
   flutter_test:
