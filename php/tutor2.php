@@ -7,13 +7,13 @@ if (!isset($_POST)) {
 }
 
 $results_per_page = 5;
-$pageno = (int)$_POST['pageno'];
+$page = (int)$_POST['page'];
 
-$page_first_result = ($pageno - 1) * $results_per_page;
+$page_first_result = ($page - 1) * $results_per_page;
 $sqlloadtutor = "SELECT * FROM tbl_tutors";
 $result = $conn->query($sqlloadtutor);
 $number_of_result = $result->num_rows;
-$number_of_page = ceil($number_of_result / $results_per_page);
+$totalPages = ceil($number_of_result / $results_per_page);
 $sqlloadtutor = $sqlloadtutor . " LIMIT $page_first_result , $results_per_page";
 $result = $conn->query($sqlloadtutor);
 

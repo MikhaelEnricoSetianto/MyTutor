@@ -7,13 +7,15 @@ if (!isset($_POST)) {
 }
 
 $results_per_page = 5;
-$pageno = (int)$_POST['pageno']??1;
+$page = (int)$_POST['page']??1;
+$search = $_POST['search'];
 
-$page_first_result = ($pageno - 1) * $results_per_page;
-$sqlloadsubject = "SELECT * FROM tbl_subjects";
+
+$page_first_result = ($page - 1) * $results_per_page;
+$sqlloadsubject = "SELECT * FROM tbl_subjects WHERE subject_name LIKE '%$search%' ORDER BY subject_id ASC";
 $result = $conn->query($sqlloadsubject);
 $number_of_result = $result->num_rows;
-$number_of_page = ceil($number_of_result / $results_per_page);
+$totalPages = ceil($number_of_result / $results_per_page);
 $sqlloadsubject = $sqlloadsubject . " LIMIT $page_first_result , $results_per_page";
 $result = $conn->query($sqlloadsubject);
 

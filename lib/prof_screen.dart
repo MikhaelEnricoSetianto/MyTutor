@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_const
+
 import 'package:flutter/material.dart';
 
 class ProfPage extends StatefulWidget {
@@ -10,8 +12,18 @@ class ProfPage extends StatefulWidget {
 class _SubjectPageState extends State<ProfPage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 0, 0),
-    );
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 0, 154, 33),
+          centerTitle: true,
+          toolbarHeight: 45,
+          title: const Text(
+            'MY TUTOR',
+            style: TextStyle(
+              color: Color.fromARGB(255, 0, 0, 0),
+            ),
+          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0));
   }
 }

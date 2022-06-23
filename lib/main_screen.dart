@@ -26,16 +26,6 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 0, 154, 33),
-          title: const Text(
-            'MY TUTOR',
-            style: TextStyle(
-              color: Color.fromARGB(255, 0, 0, 0),
-            ),
-          ),
-          centerTitle: true,
-        ),
         body: IndexedStack(index: pageIndex, children: screenPage),
         backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         bottomNavigationBar: BottomNavigationBar(
