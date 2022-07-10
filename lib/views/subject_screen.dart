@@ -1,15 +1,18 @@
-// ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables
+// ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables, avoid_print
 
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:login_ui/views/cart_screen.dart';
 import 'package:login_ui/constants.dart';
 import 'package:login_ui/models/subject.dart';
+import 'package:login_ui/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
 class SubjectPage extends StatefulWidget {
-  const SubjectPage({Key? key}) : super(key: key);
+  final User user;
+  const SubjectPage({Key? key, required this.user}) : super(key: key);
 
   @override
   State<SubjectPage> createState() => _SubjectPageState();
@@ -17,10 +20,12 @@ class SubjectPage extends StatefulWidget {
 
 class _SubjectPageState extends State<SubjectPage> {
   List<Subject> SubjectList = <Subject>[];
+  List<User> UserList = <User>[];
   var numpage, currpage = 1;
   var title = "";
   String search = "";
   TextEditingController searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +48,17 @@ class _SubjectPageState extends State<SubjectPage> {
               ),
             ),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.shopping_basket_sharp),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CartPage(user: widget.user),
+                    ),
+                  );
+                },
+              ),
               IconButton(
                 icon: const Icon(Icons.search_rounded),
                 onPressed: () {
@@ -127,6 +143,16 @@ class _SubjectPageState extends State<SubjectPage> {
                                                 fontSize: 14,
                                                 color: Colors.yellow),
                                           ),
+                                          Expanded(
+                                              flex: 10,
+                                              child: IconButton(
+                                                onPressed: () {
+                                                  _cartDialog(index);
+                                                },
+                                                icon: const Icon(
+                                                    Icons.shopping_cart),
+                                                iconSize: 16,
+                                              )),
                                         ],
                                       ))
                                 ],
@@ -134,7 +160,7 @@ class _SubjectPageState extends State<SubjectPage> {
                             );
                           }))),
                   SizedBox(
-                    height: 30,
+                    height: 25,
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemCount: numpage,
@@ -156,6 +182,47 @@ class _SubjectPageState extends State<SubjectPage> {
                   ),
                 ],
               ));
+  }
+
+  void _cartDialog(int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (context, StateSetter setState) {
+              return AlertDialog(
+                title: const Text(
+                  "Add to Cart",
+                  textAlign: TextAlign.center,
+                ),
+                content: SizedBox(
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Text("Are you sure want to add '" +
+                        (SubjectList[index].subject_name.toString()) +
+                        "' with the price of " +
+                        (SubjectList[index].subject_price.toString()) +
+                        " RM to your cart? "),
+                  ]),
+                ),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      _addtoCart(index);
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("Yes"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("No"),
+                  )
+                ],
+              );
+            },
+          );
+        });
   }
 
   void _loadSearchDialog() {
@@ -201,6 +268,25 @@ class _SubjectPageState extends State<SubjectPage> {
         });
   }
 
+  void _addtoCart(int index) {
+    http.post(Uri.parse(CONSTANTS.server + "/my_tutor/addcart.php"), body: {
+      "subject_id": SubjectList[index].subject_id.toString(),
+      "email": widget.user.email.toString(),
+    }).timeout(
+      const Duration(seconds: 5),
+      onTimeout: () {
+        return http.Response(
+            'Error', 408); // Request Timeout response status code
+      },
+    ).then((response) {
+      print(response.body);
+      var jsondata = jsonDecode(response.body);
+      if (response.statusCode == 200 && jsondata['status'] == 'success') {
+        setState(() {});
+      }
+    });
+  }
+
   void _loadSubjects(int page, String _search) {
     currpage = page;
     numpage ?? 1;
@@ -222,7 +308,6 @@ class _SubjectPageState extends State<SubjectPage> {
       },
     ).then((response) {
       var jsondata = jsonDecode(response.body);
-
       if (response.statusCode == 200 && jsondata['status'] == 'success') {
         var extractdata = jsondata['data'];
         numpage = int.parse(jsondata['totalPages']);

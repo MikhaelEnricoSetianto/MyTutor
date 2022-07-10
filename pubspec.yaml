@@ -41,6 +41,7 @@ dependencies:
   sn_progress_dialog: ^1.0.8
   number_paginator: ^0.0.2
   cached_network_image: ^3.2.1
+  webview_flutter: ^3.0.4
 
 dev_dependencies:
   flutter_test:

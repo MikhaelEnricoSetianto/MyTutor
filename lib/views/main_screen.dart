@@ -1,12 +1,16 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
-import 'package:login_ui/fav_screen.dart';
-import 'package:login_ui/prof_screen.dart';
-import 'package:login_ui/subject_screen.dart';
-import 'package:login_ui/subs_screen.dart';
-import 'package:login_ui/tutor_screen.dart';
+import 'package:login_ui/models/user.dart';
+import 'package:login_ui/views/fav_screen.dart';
+import 'package:login_ui/views/prof_screen.dart';
+import 'package:login_ui/views/subject_screen.dart';
+import 'package:login_ui/views/subs_screen.dart';
+import 'package:login_ui/views/tutor_screen.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  final User user;
+  const MainPage({Key? key, required this.user}) : super(key: key);
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -16,7 +20,7 @@ class _MainPageState extends State<MainPage> {
   var rememberValue = false;
   int pageIndex = 0;
   final screenPage = [
-    const SubjectPage(),
+    SubjectPage(user: User()),
     const TutorPage(),
     const SubsPage(),
     const FavPage(),

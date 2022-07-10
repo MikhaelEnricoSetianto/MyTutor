@@ -2,7 +2,8 @@
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:login_ui/main_screen.dart';
+import 'package:login_ui/models/user.dart';
+import 'package:login_ui/views/main_screen.dart';
 import 'package:login_ui/register_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -101,10 +102,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      // Navigator.pushReplacement(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (content) => const MainPage()));
                       if (_formKey.currentState!.validate()) {
                         _loginUser();
                       }
@@ -169,8 +166,15 @@ class _LoginPageState extends State<LoginPage> {
               fontSize: 16.0);
           pd.update(value: 100, msg: "Logged In !");
           pd.close();
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (content) => const MainPage()));
+          var extractdata = data['data'];
+          User user = User.fromJson(extractdata);
+          print(user.email);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (content) => MainPage(
+                        user: user,
+                      )));
         } else {
           Fluttertoast.showToast(
               msg: "Failed",
